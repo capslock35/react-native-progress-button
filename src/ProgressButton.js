@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, TouchableWithoutFeedback, Platform, Text, ActivityIndicator, Animated, processColor} from 'react-native';
+import {View, TouchableOpacity, Platform, Text, ActivityIndicator, Animated, processColor} from 'react-native';
 import PropTypes from 'prop-types';
 
 
@@ -111,7 +111,7 @@ class ProgressButton extends React.Component {
         if (buttonState !== 'progress') {
             this.state.progressValue.setValue(0);
         }
-        
+
         if (buttonState === 'progress' && nextProps.paused != this.props.paused
             && nextProps.progress === this.props.progress
             && nextProps.progress !== this._calculateWidthToProgress(this.state.progressValue._value, maxProgress)) {
@@ -138,7 +138,8 @@ class ProgressButton extends React.Component {
             onPress,
             buttonState,
             text,
-            maxProgress
+            maxProgress,
+            innerViewBorderRadius
         } = this.props;
 
         const maxHeight = this._calculateProgressSize(height, borderWidth, padding);
@@ -169,12 +170,11 @@ class ProgressButton extends React.Component {
 
                 const progressViewStyle = {
                     ...progressViewWrapperStyle,
-                    width: this.state.progressValue,
+                    width: (this.props.progress/this.props.maxProgress)*this.props.style.width,
                     backgroundColor: progressColor,
-                    borderRadius:ProgressButton.isAndroid? innerRadius : 0,
-                    textAlign:'center'
-
+                    borderRadius:innerViewBorderRadius,
                 };
+
                 return (
                     <View style={progressViewWrapperStyle}>
                         <Animated.View style={progressViewStyle}/>
@@ -207,12 +207,12 @@ class ProgressButton extends React.Component {
             onPress && onPress(e, buttonState, progress);
         };
         return (
-            <TouchableWithoutFeedback onPress={onPressWrapper.bind(this)}>
+            <TouchableOpacity onPress={onPressWrapper.bind(this)}>
                 <View style={{...this.props.style, overflow:'hidden'}}>
                     {_renderProgress(buttonState)}
                     {_renderTextAndIndeterminateIndicator(buttonState, text)}
                 </View>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
         );
     }
 }
